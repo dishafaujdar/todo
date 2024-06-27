@@ -4,6 +4,7 @@ import TodoForm from "./components/TodoForm";
 import TodoList from "./components/TodoList";
 import TodoDone from "./components/TodoDone";
 import AuthPage from "./components/AuthPage";
+import SendOtp from "./components/Sendotp";
 
 function App() {
 
@@ -46,6 +47,7 @@ function App() {
             }
           />
           <Route path="/auth" element={<AuthPage/>} />
+          <Route path="/sendOtp" element={<SendOtp />}/>
       </Routes>
     </div>
     </Router>

@@ -1,17 +1,16 @@
-import { Box, TextField, Button, Typography } from '@mui/material';
 import React from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate,useNavigate } from "react-router-dom";
+import { Box, TextField, Button, Typography } from '@mui/material';
 
-const AuthPage=()=>{
-    const Navigate=useNavigate()
+const SendOtp=()=>{
+    const Navigate=useNavigate();
 
-    const handleOtp=()=>{
-        Navigate('/sendOtp')
+    const mainpage=()=>{
+        
+        Navigate('https://www.netflix.com/browse')
     }
     return(
-    <div>
-        <h1>OPT page</h1>
-        <Box
+        <div><Box
         sx={{
             width: 300,
             margin: 'auto',
@@ -25,20 +24,17 @@ const AuthPage=()=>{
         }}
         >
         <Typography variant="h6" component="div" sx={{ textAlign: 'center' }}>
-        Login
+        ENTER OTP
         </Typography>
         <TextField
-            label="Email"
+            label="OTP"
             variant="outlined"
-            type="email"
+            type="OTP"
             fullWidth
             required
         />
-        <Button variant="contained" color="primary" fullWidth onClick={handleOtp}>SEND OTP</Button>
-        </Box>
-
-    </div>
+        <Button variant="contained" color="primary" fullWidth onClick={mainpage} >SUBMIT</Button>
+        </Box></div>
     )
 }
-
-export default AuthPage;
+export default SendOtp
