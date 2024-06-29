@@ -1,5 +1,5 @@
 import React from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import {useNavigate } from "react-router-dom";
 
 const TodoDone = ({ todos }) => {
     const Navigate = useNavigate();
@@ -8,7 +8,7 @@ const TodoDone = ({ todos }) => {
 
   const done = () => {
     if (allTasksCompleted) {
-      Navigate("/auth");
+      Navigate("/sendOtp");
     } else {
       alert("You still have tasks to complete!");
     }

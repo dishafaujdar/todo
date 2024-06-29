@@ -1,40 +1,65 @@
 import React from "react";
-import { Navigate,useNavigate } from "react-router-dom";
-import { Box, TextField, Button, Typography } from '@mui/material';
+import {useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 const SendOtp=()=>{
     const Navigate=useNavigate();
+    const [email, setEmail] = useState('');
+    const [otp, setOtp] = useState('');
+    const [message, setMessage] = useState('');
 
     const mainpage=()=>{
-        
-        Navigate('https://www.netflix.com/browse')
+        Navigate('/auth')
     }
+    const handleSendOtp = async (e) => {
+        e.preventDefault();
+        try {
+          const response = await axios.post('http://localhost:3000/send-otp', { email });
+          setMessage(response.data);
+        } catch (error) {
+          setMessage(error.response ? error.response.data : 'Error sending OTP');
+        }
+      };
+    
+      const handleVerifyOtp = async (e) => {
+        e.preventDefault();
+        try {
+          const response = await axios.post('http://localhost:3000/verify-otp', { otp });
+          setMessage(response.data);
+        } catch (error) {
+          setMessage(error.response ? error.response.data : 'Error verifying OTP');
+        }
+      };
     return(
-        <div><Box
-        sx={{
-            width: 300,
-            margin: 'auto',
-            padding: 2,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 2,
-            border: '1px solid #ccc',
-            borderRadius: 2,
-            boxShadow: 1,
-        }}
-        >
-        <Typography variant="h6" component="div" sx={{ textAlign: 'center' }}>
-        ENTER OTP
-        </Typography>
-        <TextField
-            label="OTP"
-            variant="outlined"
-            type="OTP"
-            fullWidth
+        <div>
+        <h1>Send OTP</h1>
+        <form onSubmit={handleSendOtp}>
+        <label htmlFor="email">Email:</label>
+        <input
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+        />  
+        <button type="submit">Send OTP</button>
+        </form>
+
+    <h1>Verify OTP</h1>
+        <form onSubmit={handleVerifyOtp}>
+        <label htmlFor="otp">OTP:</label>
+        <input
+            type="text"
+            id="otp"
+            value={otp}
+            onChange={(e) => setOtp(e.target.value)}
             required
         />
-        <Button variant="contained" color="primary" fullWidth onClick={mainpage} >SUBMIT</Button>
-        </Box></div>
+        <button type="submit" onClick={mainpage}>Verify OTP</button>
+        </form>
+
+        {message && <p>{message}</p>}
+    </div>
     )
 }
-export default SendOtp
+export default SendOtp;

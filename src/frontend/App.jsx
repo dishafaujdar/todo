@@ -3,8 +3,8 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import TodoForm from "./components/TodoForm";
 import TodoList from "./components/TodoList";
 import TodoDone from "./components/TodoDone";
-import AuthPage from "./components/AuthPage";
 import SendOtp from "./components/Sendotp";
+import AuthPage from "./components/AuthPage";
 
 function App() {
 
@@ -31,7 +31,9 @@ function App() {
     setTodos(updatedTodos);
   };
 
+  
   return (
+  <div>
     <Router>
     <div>
       <Routes>
@@ -41,16 +43,17 @@ function App() {
           <>
               <TodoForm addTodo={addTodo} />
               <TodoList todos={todos} toggleTodo={toggleTodo} deleteTodo={deleteTodo} />
-              <TodoDone todos={todos}/> 
+              <TodoDone todos={todos}/>
               {/* use to pass prop todos in todoDone */}
           </>
             }
           />
-          <Route path="/auth" element={<AuthPage/>} />
-          <Route path="/sendOtp" element={<SendOtp />}/>
+          <Route path="/sendOtp" element={<SendOtp/>}/>
+          <Route path="/auth" element={<AuthPage/>}/>
       </Routes>
     </div>
     </Router>
+  </div>
   );
 };
 
