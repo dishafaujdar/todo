@@ -1,58 +1,100 @@
+// tsdr vtwi wglz tsto (password)
 import express from 'express';
-import bodyParser from 'body-parser'
+import bodyParser from 'body-parser';
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
-dotenv.config({path:'./env'});
 import cors from 'cors';
-import validator from 'validator';
+
+dotenv.config();
+
+// Load environment variables from .env file
+process.env.AUTH_EMAIL='idishafaujdar@gmail.com',
+process.env.AUTH_PASSWORD='vbkr okfg dycv xhsn'
+
+console.log('AUTH_EMAIL:', process.env.AUTH_EMAIL);
+console.log('AUTH_PASSWORD:', process.env.AUTH_PASSWORD);
 
 const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-let currentOTP;
+const transporter = nodemailer.createTransport({
+  service: 'Gmail',
+  host:"smtp.gmail.com",
+  port:465,
+  secure:true,
+  auth: {
+    user: process.env.AUTH_EMAIL,
+    pass: process.env.AUTH_PASSWORD,
+  },
+});
 
-app.post('/send-otp', (req, res) => {
+transporter.verify((error, success) => {
+  if (error) {
+    console.error('Transporter Verification Error:', error);
+  } else {
+    console.log('Server is ready to send emails');
+  }
+});
+
+const sendOtp = async (req, res) => {
   const { email } = req.body;
-  if (!email || !validator.isEmail(email)) {
-    return res.status(400).json({ error: 'Invalid email address.' });
-  } 
-  currentOTP = Math.floor(100000 + Math.random() * 900000).toString();
+  const otp = `${Math.floor(1000 + Math.random() * 9000)}`;
 
-const transporter = 
-nodemailer.createTransport({
-    service: 'Gmail',
-    auth: {
-      user: process.env.USER_EMAIL_ID,
-      pass: process.env.USER_PASSWORD
-    }
-  });
+  if (!email) {
+    return res.status(400).json({ status: 'FAILED', message: 'Email is required' });
+  }
 
   const mailOptions = {
-    from: process.env.USER_EMAIL_ID,
+    from: process.env.AUTH_EMAIL,
     to: email,
-    subject: 'Your OTP Code',
-    text: `Your OTP code is ${currentOTP}`
+    subject: "Here's your OTP",
+    html: `<p>Enter <b>${otp}</b> in your todo to continue with movies</p>`,
   };
 
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      return res.status(500).json('Error sending OTP');
-    } else {
-      console.log('OTP sent: ' + info.response);
-      return res.status(200).json('OTP sent');
+  transporter.sendMail(mailOptions,(error,info)=>{
+    if(error){
+      console.log("error",error)
+    } else{
+      console.log("send",info.response)
     }
-  });
+  })
 
-  app.post('/verify-otp', (req, res) => {
-    const { otp } = req.body;
-    if (otp === currentOTP) {
-      res.status(200).json('OTP verified!');
-    } else {
-      res.status(400).json('Invalid OTP!');
-    }
-  });
+  try {
+    await transporter.sendMail(mailOptions);
+    res.json({
+      status: 'PENDING',
+      message: 'EMAIL SENT',
+      data: {
+        email,
+        otp,
+      },
+    });
+  } catch (error) {
+    console.error('Error sending OTP:', error);
+    res.status(500).json({
+      status: 'FAILED',
+      message: 'Error sending OTP',
+      error: error.message,
+    });
+  }
+};
 
-});
-const PORT=3000
+const verifyOtp= async (req, res) => {
+  const { otp } = req.body;
+  if (otp === otp) {
+    res.status(200).json('OTP verified!');
+    console.log({otp})
+  } else {
+    res.status(400).json('Invalid OTP!');
+  }
+};
+
+app.post('/send-otp', sendOtp);
+app.post('/verify-otp',verifyOtp)
+const PORT = 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+
+
+
