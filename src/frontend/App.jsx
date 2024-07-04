@@ -4,12 +4,11 @@ import TodoForm from "./components/TodoForm";
 import TodoList from "./components/TodoList";
 import TodoDone from "./components/TodoDone";
 import SendOtp from "./components/Sendotp";
-import AuthPage from "./components/AuthPage";
+// import AuthPage from "./components/AuthPage";
 
 function App() {
-
   const [todos, setTodos] = useState([]);
-
+  
   const addTodo = (task) => {
     const newTodo = {
       id: todos.length + 1,
@@ -33,6 +32,7 @@ function App() {
 
   
   return (
+  <div style={{height:'100vw',background:'#002D62'}}>
   <div>
     <Router>
     <div>
@@ -49,10 +49,11 @@ function App() {
             }
           />
           <Route path="/sendOtp" element={<SendOtp/>}/>
-          <Route path="/auth" element={<AuthPage/>}/>
+          {/* <Route path="/auth" element={<AuthPage/>}/> */}
       </Routes>
     </div>
     </Router>
+  </div>
   </div>
   );
 };

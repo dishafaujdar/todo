@@ -4,7 +4,8 @@ import React from "react";
 const AuthPage=()=>{
     return(
     <div>
-        <Box
+        
+        {/* <Box
         sx={{
             width: 300,
             margin: 'auto',
@@ -18,7 +19,7 @@ const AuthPage=()=>{
         }}
         >
         <Typography variant='h2'>FINISH WHAT YOU STARTED!</Typography>
-         </Box>
+         </Box> */}
 
     </div>
     )
