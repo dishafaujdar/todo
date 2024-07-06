@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import TodoForm from "./components/TodoForm";
-import TodoList from "./components/TodoList";
-import TodoDone from "./components/TodoDone";
-import SendOtp from "./components/Sendotp";
+import TodoForm from "./level1/TodoForm";
+import TodoList from "./level1/TodoList";
+import TodoDone from "./level1/TodoDone";
+import SendOtp from "./level1/Sendotp";
+import Signup from "./level2/Signup";
 // import AuthPage from "./components/AuthPage";
 
 function App() {
@@ -32,7 +33,8 @@ function App() {
 
   
   return (
-  <div style={{height:'100vw',background:'#002D62'}}>
+  <div>
+    <Signup />
   <div>
     <Router>
     <div>
