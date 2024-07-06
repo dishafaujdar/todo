@@ -5,6 +5,8 @@ import TodoList from "./level1/TodoList";
 import TodoDone from "./level1/TodoDone";
 import SendOtp from "./level1/Sendotp";
 import Signup from "./level2/Signup";
+import { Login } from "./level2/Login";
+import Newtodo from "./level2/Newtodo"
 // import AuthPage from "./components/AuthPage";
 
 function App() {
@@ -31,16 +33,15 @@ function App() {
     setTodos(updatedTodos);
   };
 
-  
+
   return (
   <div>
-    <Signup />
   <div>
     <Router>
     <div>
       <Routes>
         <Route 
-          path="/"
+          path="/todo"
           element={
           <>
               <TodoForm addTodo={addTodo} />
@@ -51,7 +52,9 @@ function App() {
             }
           />
           <Route path="/sendOtp" element={<SendOtp/>}/>
-          {/* <Route path="/auth" element={<AuthPage/>}/> */}
+          <Route path="/signup" element={<Signup/>}/>
+          <Route path="/login" element={<Login />}/>
+          <Route path="/newtodo" element={<Newtodo/>}/>
       </Routes>
     </div>
     </Router>
