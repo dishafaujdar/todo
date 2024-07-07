@@ -8,6 +8,7 @@ import Signup from "./level2/Signup";
 import { Login } from "./level2/Login";
 import Newtodo from "./level2/Newtodo"
 // import AuthPage from "./components/AuthPage";
+import Authpg from "./level2/Newauthpg";
 
 function App() {
   const [todos, setTodos] = useState([]);
@@ -55,6 +56,7 @@ function App() {
           <Route path="/signup" element={<Signup/>}/>
           <Route path="/login" element={<Login />}/>
           <Route path="/newtodo" element={<Newtodo/>}/>
+          <Route path="/newauth" element={<Authpg/>}/>
       </Routes>
     </div>
     </Router>

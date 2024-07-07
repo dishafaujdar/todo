@@ -1,27 +1,30 @@
+// src/styles.js
 import { styled } from '@mui/material/styles';
 
-const style = styled((theme) => ({
-  drawer: {
+const Drawer = styled('div')(({ theme }) => ({
+  width: 240,
+  flexShrink: 0,
+  '& .MuiDrawer-paper': {
     width: 240,
   },
-  drawerPaper: {
-    width: 240,
-  },
-  content: {
-    flexGrow: 1,
-    padding: theme.spacing(3),
-  },
-  appBar: {
-    zIndex: theme.zIndex.drawer + 1,
-  },
-  menuButton: {
-    marginRight: theme.spacing(2),
-  },
-  toolbar: theme.mixins.toolbar,
-  taskCard: {
-    padding: theme.spacing(2),
-    marginBottom: theme.spacing(2),
-  },
+}));
+
+const AppBar = styled('div')(({ theme }) => ({
+  zIndex: theme.zIndex.drawer + 1,
+}));
+
+const Toolbar = styled('div')(({ theme }) => ({
+  ...theme.mixins.toolbar,
+}));
+
+const Content = styled('main')(({ theme }) => ({
+  flexGrow: 1,
+  padding: theme.spacing(3),
+}));
+
+const TaskCard = styled('div')(({ theme }) => ({
+  padding: theme.spacing(2),
+  marginBottom: theme.spacing(2),
 }));
 
 export { Drawer, AppBar, Toolbar, Content, TaskCard };
