@@ -1,4 +1,3 @@
-// src/App.js
 import React, { useState } from 'react';
 import {
   AppBar as MuiAppBar,
@@ -17,7 +16,9 @@ import {
   Paper,
   Grid,
   TextField,
-  MenuItem
+  MenuItem,
+  Checkbox,
+  FormControlLabel
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import DashboardIcon from '@mui/icons-material/Dashboard';
@@ -37,9 +38,21 @@ const MyApp = () => {
 
   const addTask = () => {
     if (newTask.date && newTask.text) {
-      setTasks((prev) => [...prev, newTask]);
+      setTasks((prev) => [...prev, { ...newTask, completed: false }]);
       setNewTask({ date: '', text: '', priority: 'Low' });
     }
+  };
+
+  const toggle = (index) => {
+    setTasks((prev) =>
+      prev.map((task, i) =>
+        i === index ? { ...task, completed: !task.completed } : task
+      )
+    );
+  };
+
+  const deleteTask = (indexToDelete) => {
+    setTasks((prev) => prev.filter((_, index) => index !== indexToDelete));
   };
 
   return (
@@ -129,13 +142,28 @@ const MyApp = () => {
               </Typography>
               <Paper sx={{ padding: 2, marginBottom: 2 }}>
                 <Grid container alignItems="center" justifyContent="space-between">
-                  <Grid item xs={8}>
-                    <Typography>{task.text}</Typography>
+                  <Grid item xs={1}>
+                    <Checkbox
+                      color="primary"
+                      checked={task.completed}
+                      onChange={() => toggle(index)}
+                      style={{ textDecoration: task.completed ? 'line-through' : 'none' }}
+                    />
+                  </Grid>
+                  <Grid item xs={7}>
+                    <Typography
+                      style={{ textDecoration: task.completed ? 'line-through' : 'none' }}
+                    >
+                      {task.text}
+                    </Typography>
                   </Grid>
                   <Grid item xs={4} textAlign="right">
                     <Typography color={task.priority === 'High' ? 'error' : 'textSecondary'}>
                       {task.priority} Priority
                     </Typography>
+                  </Grid>
+                  <Grid item xs={1}>
+                    <Button onClick={() => deleteTask(index)}>Delete</Button>
                   </Grid>
                 </Grid>
               </Paper>
