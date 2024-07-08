@@ -176,3 +176,8 @@ const MyApp = () => {
 };
 
 export default MyApp;
+
+
+// git remote -v
+// git remote remove origin
+// git remove -v
