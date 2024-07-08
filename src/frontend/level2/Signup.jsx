@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useState,useEffect} from 'react';
 import {Navigate, useNavigate } from "react-router-dom";
 import { fbDataUrl, googleDataUrl, twitterDataUrl } from '../../assest/photo'
 import {
@@ -20,6 +20,31 @@ const theme = createTheme();
 
 
 const Signup=()=>{
+  
+  const Navigate=useNavigate();
+
+  const[navigate,setNavigate]=useState(false);
+  const[formdata,setFormdata]=useState({
+    email:[],
+    password:[]
+  })
+  
+  useEffect(()=>{
+    if(navigate){
+      Navigate('/newtodo')
+    }
+  },[navigate,Navigate]);
+
+  const handlenav=(e)=>{
+    e.preventDefault();
+    const{name,value}=e.target;
+    
+    setFormdata({
+      ...formdata,
+      [name]:value,
+    })
+    setNavigate(true)
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -64,14 +89,41 @@ const Signup=()=>{
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
             />
-            <Button
-              type="submit"
+            <form onSubmit={handlenav}>
+
+              <TextField
+              margin="normal"
+              required
               fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Sign In 
-            </Button>
+              name="name"
+              label="name"
+              type="name"
+              id="name"
+              autoComplete="name"
+              value={formdata.name}
+              onChange={handlenav}></TextField>
+
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+                value={formdata.password}
+                onChange={handlenav}
+              ></TextField>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Sign In
+              </Button>
+            </form>
             <Grid container>
               <Grid item xs>
                 <Link href="#" variant="body2">
