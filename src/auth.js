@@ -13,10 +13,10 @@ const secretkey= 'SecRETE';
 
 const USERS=[]
 
-const jwtToken = (user) => {
-    const payload = { username: user.username };
-    return jwt.sign(payload, secretkey, { expiresIn: '1h' });
-};
+// const jwtToken = (user) => {
+//     const payload = { username: user.username };
+//     return jwt.sign(payload, secretkey, { expiresIn: '1h' });
+// };
 
 const authenticatejwt = (req, res, next) => {
     const authHeader = req.headers.authorization;
@@ -34,28 +34,32 @@ const authenticatejwt = (req, res, next) => {
     }
 };
 
-app.post('/signup',(req,res)=>{
-    const user=req.body;
-    const userExist=USERS.find(u=> u.username === user.username)
+app.post('/signup', async (req,res)=>{
+    const {username,password}=req.body;
+    const userExist= await USERS.findOne({username})
     if(userExist){
         res.status(403).json({ message: "User already exists" });
 
     } else{
-        USERS.push(user);
-        const token=jwtToken(user);
+        const newUser= new USERS.push(username,password);
+        await newUser.save();
+        const token = jwt.sign({ username}, SECRET, { expiresIn: '1h' });   //In the provided code, the jwt.sign function from the jsonwebtoken library is used to create a JSON Web Token (JWT). Here's a breakdown of the code:
         res.json({ message: "User created", token });
         console.log(token);
     }
 });
 
-app.post('/login',(req,res)=>{
-    const {username,password}=req.body;
-    const existUser=USERS.find(u=>u.username === username && u.password === password);
+app.post('/login', async (req,res)=>{
+    const {username,password}=req.headers;
+    const existUser= await USERS.findOne({username,password});
     if(existUser){
-        const token = jwtToken(user);
+        const token = jwt.sign({ username}, SECRET, { expiresIn: '1h' }); 
         res.json({ message: "Login successful", token });
         console.log(token)
     } else{
-        res.status(403).json({ message: "Authentication failed" });
+        res.status(403).json({ message: "Authentication failedInvalid username or password " });
     }
 });
+
+const PORT=3000;
+app.listen(PORT,()=>console.log(`server running on ${PORT}`));
