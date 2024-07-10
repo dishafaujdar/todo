@@ -25,25 +25,55 @@ const Signup=()=>{
 
   const[navigate,setNavigate]=useState(false);
   const[formdata,setFormdata]=useState({
-    email:[],
+    name:[],
     password:[]
   })
   
-  useEffect(()=>{
-    if(navigate){
-      Navigate('/newtodo')
-    }
-  },[navigate,Navigate]);
+  // useEffect(()=>{
+  //   if(navigate){
+  //     Navigate('/newtodo')
+  //   }
+  // },[navigate,Navigate]); 
 
-  const handlenav=(e)=>{
+  const handleinput=(e)=>{
     e.preventDefault();
     const{name,value}=e.target;
     
     setFormdata({
-      ...formdata,
+      ...formdata,  
       [name]:value,
     })
-    setNavigate(true)
+  }
+  const handleSubmit= async (e)=>{
+    e.preventDefault();
+    try{
+      const response = await fetch('http://localhost:3000/signup',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify(formdata),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Something went wrong');
+      }
+      else if (response.ok){
+        const data=await response.json()
+        localStorage.setItem('token', data.token);
+        Navigate('/newtodo');
+      }else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred. Please try again.');
+    }if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Something went wrong');
+        }
+
+
+    setNavigate(true);
   }
 
   return (
@@ -64,34 +94,8 @@ const Signup=()=>{
           <Typography component="h1" variant="h5">
             Sign to TodoIST 
           </Typography>
-          <Box component="form" noValidate sx={{ mt: 1 }}>
+          <Box component="form" noValidate sx={{ mt: 1 }} onSubmit={handleSubmit}>
             <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              autoFocus
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-            />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
-            <form onSubmit={handlenav}>
-
-              <TextField
               margin="normal"
               required
               fullWidth
@@ -101,7 +105,9 @@ const Signup=()=>{
               id="name"
               autoComplete="name"
               value={formdata.name}
-              onChange={handlenav}></TextField>
+              onChange={handleinput}
+              
+              ></TextField>
 
               <TextField
                 margin="normal"
@@ -113,8 +119,13 @@ const Signup=()=>{
                 id="password"
                 autoComplete="current-password"
                 value={formdata.password}
-                onChange={handlenav}
-              ></TextField>
+                onChange={handleinput}
+                ></TextField>
+
+              <FormControlLabel
+              control={<Checkbox value="remember" color="primary" />}
+              label="Remember me" 
+              />
               <Button
                 type="submit"
                 fullWidth
@@ -123,7 +134,7 @@ const Signup=()=>{
               >
                 Sign In
               </Button>
-            </form>
+
             <Grid container>
               <Grid item xs>
                 <Link href="#" variant="body2">

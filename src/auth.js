@@ -2,13 +2,13 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import jsonwebtoken from 'jsonwebtoken';
-import mongoose from 'mongoose';
+// import mongoose from 'mongoose';
 // import {User} from './models/user.models.js'
 // import {TODO} from './models/todo.models.js'
 const app=express();
 
 app.use(bodyParser.json())
-
+app.use(cors());
 const secretkey= 'SecRETE';
 
 const USERS=[]
@@ -17,6 +17,10 @@ const USERS=[]
 //     const payload = { username: user.username };
 //     return jwt.sign(payload, secretkey, { expiresIn: '1h' });
 // };
+
+// mongoose.connect('mongodb://localhost:27017/userinfo')
+//     .then(() => console.log('MongoDB connected'))
+//     .catch(err => console.log(err));
 
 const authenticatejwt = (req, res, next) => {
     const authHeader = req.headers.authorization;
@@ -33,31 +37,36 @@ const authenticatejwt = (req, res, next) => {
         res.sendStatus(401);
     }
 };
+    // const token = jwt.sign({ username}, SECRET, { expiresIn: '1h' }); In the provided code, the jwt.sign function from the jsonwebtoken library is used to create a JSON Web Token (JWT). Here's a breakdown of the code: This is use when we use mongoose or have a database 
 
-app.post('/signup', async (req,res)=>{
-    const {username,password}=req.body;
-    const userExist= await USERS.findOne({username})
-    if(userExist){
+app.post('/signup', (req, res) => {
+    const { username, password } = req.body;
+    
+    if (!username || !password) {
+        return res.status(400).json({ message: "Username and password are required" });
+    }
+    const userExist = USERS.find(user => user.username === username);
+    if (userExist) {
         res.status(403).json({ message: "User already exists" });
-
-    } else{
-        const newUser= new USERS.push(username,password);
-        await newUser.save();
-        const token = jwt.sign({ username}, SECRET, { expiresIn: '1h' });   //In the provided code, the jwt.sign function from the jsonwebtoken library is used to create a JSON Web Token (JWT). Here's a breakdown of the code:
+    }
+    else {
+        const newUser = { username, password };
+        USERS.push(newUser);
+        const token = jsonwebtoken.sign({ username }, secretkey, { expiresIn: '1h' });
         res.json({ message: "User created", token });
         console.log(token);
-    }
+    } 
 });
 
-app.post('/login', async (req,res)=>{
-    const {username,password}=req.headers;
-    const existUser= await USERS.findOne({username,password});
-    if(existUser){
-        const token = jwt.sign({ username}, SECRET, { expiresIn: '1h' }); 
+app.post('/login', (req, res) => {
+    const { username, password } = req.body;
+    const existUser = USERS.find(user => user.username === username && user.password === password);
+    if (existUser) {
+        const token = jsonwebtoken.sign({ username }, secretkey, { expiresIn: '1h' });
         res.json({ message: "Login successful", token });
-        console.log(token)
-    } else{
-        res.status(403).json({ message: "Authentication failedInvalid username or password " });
+        console.log(token);
+    } else {
+        res.status(403).json({ message: "Invalid username or password" });
     }
 });
 

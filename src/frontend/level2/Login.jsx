@@ -57,10 +57,6 @@ const Login=()=>{
                 id="password"
                 autoComplete="current-password"
               />
-              {/* <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Remember me"
-              /> */}
               <Button
                 type="submit"
                 fullWidth
@@ -69,44 +65,6 @@ const Login=()=>{
               >
                 Log In 
               </Button>
-              {/* <Grid container>
-                <Grid item xs>
-                  <Link href="#" variant="body2">
-                    Forgot password?
-                  </Link>
-                </Grid>
-              </Grid>
-            </Box>
-            <Box sx={{ mt: 2 }}>
-              <Button
-                fullWidth
-                variant="outlined"
-                startIcon={<img src={googleDataUrl} alt="Google" width="40" />}
-                sx={{ mb: 1 }}
-              >
-                Sign in with Google
-              </Button>
-              <Button
-                fullWidth
-                variant="outlined"
-                startIcon={
-                  <img
-                    src={fbDataUrl}
-                    alt="Facebook"
-                    width="40"
-                  />
-                }
-                sx={{ mb: 1 }}
-              >
-                Sign in with Facebook
-              </Button>
-              <Button
-                fullWidth
-                variant="outlined"
-                startIcon={<img src={twitterDataUrl} alt="Twitter" width="40" />}
-              >
-                Sign in with Twitter
-              </Button> */}
             </Box>
           </Box>
         </Container>
