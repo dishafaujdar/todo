@@ -5,7 +5,7 @@ import TodoList from "./level1/TodoList";
 import TodoDone from "./level1/TodoDone";
 import SendOtp from "./level1/Sendotp";
 import Signup from "./level2/Signup";
-import { Login } from "./level2/Login";
+import Login from "./level2/Login";
 import Newtodo from "./level2/Newtodo"
 // import AuthPage from "./components/AuthPage";
 import Authpg from "./level2/Newauthpg";

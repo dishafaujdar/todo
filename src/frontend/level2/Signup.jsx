@@ -25,8 +25,8 @@ const Signup=()=>{
 
   const[navigate,setNavigate]=useState(false);
   const[formdata,setFormdata]=useState({
-    name:[],
-    password:[]
+    username:'',
+    password:''
   })
   
   // useEffect(()=>{
@@ -38,43 +38,41 @@ const Signup=()=>{
   const handleinput=(e)=>{
     e.preventDefault();
     const{name,value}=e.target;
-    
+  
     setFormdata({
       ...formdata,  
       [name]:value,
-    })
+    });
   }
   const handleSubmit= async (e)=>{
     e.preventDefault();
+    console.log('Form data:', formdata); 
     try{
-      const response = await fetch('http://localhost:3000/signup',{
+      const response = await fetch('http://localhost:3000/signup',{ 
         method:'POST',
         headers:{'Content-Type':'application/json'},
         body: JSON.stringify(formdata),
       });
       
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Something went wrong');
-      }
-      else if (response.ok){
-        const data=await response.json()
-        localStorage.setItem('token', data.token);
-        Navigate('/newtodo');
-      }else {
+      const data = await response.json(); // Read the response body only once
+
+      if (response.status === 409) {
         alert(data.message);
+        Navigate('/login'); // Redirect to login page if user already exists
+      } else if (!response.ok) {
+        throw new Error(data.message || 'Something went wrong');
+      } else{
+      localStorage.setItem('token', data.token);
+      Navigate('/newtodo');
       }
     } catch (error) {
       console.error('Error:', error);
       alert('An error occurred. Please try again.');
-    }if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || 'Something went wrong');
-        }
-
-
-    setNavigate(true);
+    }
+    // setNavigate(true);
   }
+
+
 
   return (
     <ThemeProvider theme={theme}>
@@ -99,12 +97,12 @@ const Signup=()=>{
               margin="normal"
               required
               fullWidth
-              name="name"
-              label="name"
-              type="name"
-              id="name"
-              autoComplete="name"
-              value={formdata.name}
+              name="username"
+              label="username"
+              type="text"
+              id="username"
+              autoComplete="username"
+              value={formdata.username}
               onChange={handleinput}
               
               ></TextField>

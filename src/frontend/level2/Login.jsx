@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useState} from 'react';
 import {Navigate, useNavigate } from "react-router-dom";
 import {
   Container,
@@ -18,6 +18,45 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 const theme = createTheme();
 
 const Login=()=>{
+  const navigate = useNavigate();
+
+  const [formData, setFormData] = useState({
+    username: '',
+    password: ''
+  });
+
+  const handleInput = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log('Form data:', formData); 
+    try {
+      const response = await fetch('http://localhost:3000/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Something went wrong');
+      } else {
+        localStorage.setItem('token', data.token);
+        navigate('/newtodo');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred. Please try again.');
+    }
+  };
+
     return(
         <ThemeProvider theme={theme}>
         <Container component="main" maxWidth="xs">
@@ -36,16 +75,19 @@ const Login=()=>{
             <Typography component="h1" variant="h5">
               Login to TodoIST 
             </Typography>
-            <Box component="form" noValidate sx={{ mt: 1 }}>
+            <Box component="form" noValidate sx={{ mt: 1 }} onSubmit={handleSubmit}>
               <TextField
                 margin="normal"
                 required
                 fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
+                id="username"
+                label="username"
+                type='text'
+                name="username"
+                autoComplete="username"
                 autoFocus
+                value={formData.username}
+                onChange={handleInput}
               />
               <TextField
                 margin="normal"
@@ -56,6 +98,8 @@ const Login=()=>{
                 type="password"
                 id="password"
                 autoComplete="current-password"
+                value={formData.password}
+                onChange={handleInput}
               />
               <Button
                 type="submit"
@@ -72,4 +116,4 @@ const Login=()=>{
     );
   }
 
-export {Login}
+  export default Login;

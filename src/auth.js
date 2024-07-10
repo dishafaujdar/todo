@@ -41,13 +41,13 @@ const authenticatejwt = (req, res, next) => {
 
 app.post('/signup', (req, res) => {
     const { username, password } = req.body;
-    
+    console.log('Received data:', req.body); // Log received data
     if (!username || !password) {
-        return res.status(400).json({ message: "Username and password are required" });
+        res.status(400).json({ message: "Username and password are required" });
     }
     const userExist = USERS.find(user => user.username === username);
     if (userExist) {
-        res.status(403).json({ message: "User already exists" });
+        res.status(409).json({ message: "User already exists" });
     }
     else {
         const newUser = { username, password };
@@ -60,7 +60,13 @@ app.post('/signup', (req, res) => {
 
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
+    if (!username || !password) {
+        return res.status(400).json({ message: "Username and password are required" });
+    }
+    console.log('Login attempt with:', req.body); // Log login attempt
+    
     const existUser = USERS.find(user => user.username === username && user.password === password);
+
     if (existUser) {
         const token = jsonwebtoken.sign({ username }, secretkey, { expiresIn: '1h' });
         res.json({ message: "Login successful", token });
