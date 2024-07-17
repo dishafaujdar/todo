@@ -25,7 +25,7 @@ const Signup=()=>{
 
   const[navigate,setNavigate]=useState(false);
   const[formdata,setFormdata]=useState({
-    username:'',
+    email:'',
     password:''
   })
   
@@ -37,11 +37,11 @@ const Signup=()=>{
 
   const handleinput=(e)=>{
     e.preventDefault();
-    const{name,value}=e.target;
+    const{email,value}=e.target;
   
     setFormdata({
       ...formdata,  
-      [name]:value,
+      [email]:value,
     });
   }
   const handleSubmit= async (e)=>{
@@ -72,7 +72,9 @@ const Signup=()=>{
     // setNavigate(true);
   }
 
-
+  const handlelogin=()=>{
+    Navigate('/login')
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -97,12 +99,12 @@ const Signup=()=>{
               margin="normal"
               required
               fullWidth
-              name="username"
-              label="username"
+              name="email"
+              label="email"
               type="text"
-              id="username"
-              autoComplete="username"
-              value={formdata.username}
+              id="email"
+              autoComplete="email"
+              value={formdata.email}
               onChange={handleinput}
               
               ></TextField>
@@ -124,14 +126,25 @@ const Signup=()=>{
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me" 
               />
+              <div style={{display:'flex', justifyContent:'space-between' }}>
               <Button
                 type="submit"
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
-              >
+                >
                 Sign In
               </Button>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+                onClick={handlelogin}
+                >
+                Login
+              </Button>
+              </div>
 
             <Grid container>
               <Grid item xs>

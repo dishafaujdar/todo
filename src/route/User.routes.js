@@ -1,5 +1,9 @@
 // // Routes for user registration and login
-app.post('/register', async (req, res) => {
+import express from 'express';
+import User from '../models/User.models';
+const Router = express.Router();
+
+Router.post('/register', async (req, res) => {
     const { email, password } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = new User({ email, password: hashedPassword });
@@ -7,7 +11,7 @@ app.post('/register', async (req, res) => {
     res.status(201).send('User registered');
   });
   
-  app.post('/login', async (req, res) => {
+Router.post('/login', async (req, res) => {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
     if (!user || !await bcrypt.compare(password, user.password)) return res.sendStatus(403);
@@ -15,21 +19,8 @@ app.post('/register', async (req, res) => {
     res.json({ token });
   });
   
-  // To-do routes
-  app.get('/todos', authenticateToken, async (req, res) => {
-    const todos = await Todo.find({ userId: req.user.id });
-    res.json(todos);
-  });
-  
-  app.post('/todos', authenticateToken, async (req, res) => {
-    const todo = new Todo({
-      userId: req.user.id,
-      task: req.body.task,
-      completed: false,
-    });
-    await todo.save();
-    res.status(201).json(todo);
-  });
+
+  module.exports = Router;
   
 //   app.put('/todos/:id', authenticateToken, async (req, res) => {
 //     const todo = await Todo.findOneAndUpdate({ _id: req.params.id, userId: req.user.id }, { completed: req.body.completed }, { new: true });

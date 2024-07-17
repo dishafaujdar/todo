@@ -21,7 +21,7 @@ const Login=()=>{
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    username: '',
+    email: '',
     password: ''
   });
 
@@ -53,7 +53,7 @@ const Login=()=>{
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('An error occurred. Please try again.');
+      alert('Please try again.');
     }
   };
 
@@ -80,13 +80,13 @@ const Login=()=>{
                 margin="normal"
                 required
                 fullWidth
-                id="username"
-                label="username"
-                type='text'
-                name="username"
-                autoComplete="username"
+                id="email"
+                label="email"
+                type='email'
+                name="email"
+                autoComplete="email"
                 autoFocus
-                value={formData.username}
+                value={formData.email}
                 onChange={handleInput}
               />
               <TextField
