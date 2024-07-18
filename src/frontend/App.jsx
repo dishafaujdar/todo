@@ -4,6 +4,7 @@ import Signup from "./level2/Signup";
 import Login from "./level2/Login";
 import Newtodo from "./level2/Newtodo"
 import Authpg from "./level2/Newauthpg";  
+// import TaskForm from "./level2/Toodoo";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
       <Routes>
         <Route 
           />
+          {/* <Route path="/task" element={<TaskForm/>}/> */}
           <Route path="/sendOtp" element={<SendOtp/>}/>
           <Route path="/signup" element={<Signup/>}/>
           <Route path="/login" element={<Login />}/>

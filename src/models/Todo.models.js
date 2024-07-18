@@ -4,25 +4,35 @@ const todoSchema = new mongoose.Schema(
   {
     content: {
       type: String,
-      require: true,
+      required: true,
     },
-    complete: {
-      type: Boolean,
-      default: false,
+    Date: {
+      type:Date,
+      required:true
+    },
+    Priority: {
+      type: String,
+      enum: ['Low','High'],
+      required: true,
     },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
+      required: true,
     },
-    subTodos: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Subtodo',
-      },
-    ],
   },
   { timestamps: true }
 );
 
 const Todo = mongoose.model('Todo', todoSchema);
-module.exports= Todo
+export default Todo;
+
+  // complete: {
+    //   type: Boolean,
+    //   default: false,
+    // },
+    // subTodos: [
+    //   {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'Subtodo',
+    //   },

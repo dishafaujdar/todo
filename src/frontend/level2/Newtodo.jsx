@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import {
+import React, { useState , useEffect } from 'react';
+import 
+{
   AppBar as MuiAppBar,
   Box,
   CssBaseline,
@@ -27,21 +28,62 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ActivityIcon from '@mui/icons-material/LocalActivity';
 
-const MyApp = () => {
+const MyApp = () => 
+{
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState({ date: '', text: '', priority: 'Low' });
+  const token = localStorage.getItem('token'); // Assuming token is stored in localStorage
+
+  useEffect(() => {
+    const fetchTodos = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/newtodo', {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`, 
+          },
+        });
+        const result = await response.json();
+        setTasks(result);
+      } catch (error) {
+        console.error('Error fetching todos:', error);
+      }
+    };
+
+    fetchTodos();
+  }, [token]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewTask((prev) => ({ ...prev, [name]: value }));
   };
 
-  const addTask = () => {
+  const addTask = async () => 
+  {
     if (newTask.date && newTask.text) {
-      setTasks((prev) => [...prev, { ...newTask, completed: false }]);
-      setNewTask({ date: '', text: '', priority: 'Low' });
-    }
-  };
+      try {
+        const response = await fetch('http://localhost:3000/newtodo',{
+          method:'POST',
+          headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            content: newTask.text,
+            Date: newTask.date,
+            Priority: newTask.priority,
+          }),
+
+        });
+        const result = await response.json();
+        const createdTask = result.todo;
+        setTasks((prev) => [...prev, { ...createdTask, completed: false }]);
+        setNewTask({ date: '', text: '', priority: 'Low' });
+      }
+      catch (error) {
+        console.error('Error creating task:', error);
+      }
+    };
 
   const toggle = (index) => {
     setTasks((prev) =>
@@ -56,46 +98,46 @@ const MyApp = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
-      <MuiAppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-        <MuiToolbar>
-          <IconButton color="inherit" aria-label="open drawer" edge="start">
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap>
-            TODOist
-          </Typography>
-        </MuiToolbar>
-      </MuiAppBar>
-      <MuiDrawer
-        sx={{
-          width: 240,
-          flexShrink: 0,
-          '& .MuiDrawer-paper': {
-            width: 240,
-          },
-        }}
-        variant="permanent"
-      >
-        <MuiToolbar />
-        <List>
-          {[
-            { text: 'Dashboard', icon: <DashboardIcon /> },
-            { text: 'Tasks', icon: <AssignmentIcon /> },
-            { text: 'Activity', icon: <ActivityIcon /> },
-            { text: 'Notifications', icon: <NotificationsIcon /> },
-            { text: 'Settings', icon: <SettingsIcon /> },
-          ].map((item) => (
-            <ListItem button key={item.text}>
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.text} />
-            </ListItem>
-          ))}
-        </List>
-      </MuiDrawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <MuiToolbar />
+    // <Box sx={{ display: 'flex' }}>
+    //   <CssBaseline />
+    //   <MuiAppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+    //     <MuiToolbar>
+    //       <IconButton color="inherit" aria-label="open drawer" edge="start">
+    //         <MenuIcon />
+    //       </IconButton>
+    //       <Typography variant="h6" noWrap>
+    //         TODOist
+    //       </Typography>
+    //     </MuiToolbar>
+    //   </MuiAppBar>
+    //   <MuiDrawer
+    //     sx={{
+    //       width: 240,
+    //       flexShrink: 0,
+    //       '& .MuiDrawer-paper': {
+    //         width: 240,
+    //       },
+    //     }}
+    //     variant="permanent"
+    //   >
+    //     <MuiToolbar />
+    //     <List>
+    //       {[
+    //         { text: 'Dashboard', icon: <DashboardIcon /> },
+    //         { text: 'Tasks', icon: <AssignmentIcon /> },
+    //         { text: 'Activity', icon: <ActivityIcon /> },
+    //         { text: 'Notifications', icon: <NotificationsIcon /> },
+    //         { text: 'Settings', icon: <SettingsIcon /> },
+    //       ].map((item) => (
+    //         <ListItem button key={item.text}>
+    //           <ListItemIcon>{item.icon}</ListItemIcon>
+    //           <ListItemText primary={item.text} />
+    //         </ListItem>
+    //       ))}
+    //     </List>
+    //   </MuiDrawer>
+    //   <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+        // <MuiToolbar />
         <Container>
           <Box display="flex" justifyContent="space-between" mb={3}>
             <Typography variant="h4">My Tasks</Typography>
@@ -170,14 +212,9 @@ const MyApp = () => {
             </Box>
           ))}
         </Container>
-      </Box>
-    </Box>
+      // </Box>
+    // </Box>
   );
 };
-
+}
 export default MyApp;
-
-
-// git remote -v
-// git remote remove origin
-// git remove -v

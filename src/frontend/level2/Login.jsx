@@ -19,6 +19,7 @@ const theme = createTheme();
 
 const Login=()=>{
   const navigate = useNavigate();
+  // const [todos, setTodos] = useState([]);
 
   const [formData, setFormData] = useState({
     email: '',
@@ -47,7 +48,9 @@ const Login=()=>{
 
       if (!response.ok) {
         throw new Error(data.message || 'Something went wrong');
-      } else {
+      } 
+      else {
+        // setTodos(data);
         localStorage.setItem('token', data.token);
         navigate('/newtodo');
       }

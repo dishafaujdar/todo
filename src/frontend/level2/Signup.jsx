@@ -23,7 +23,7 @@ const Signup=()=>{
   
   const Navigate=useNavigate();
 
-  const[navigate,setNavigate]=useState(false);
+  // const[navigate,setNavigate]=useState(false);
   const[formdata,setFormdata]=useState({
     email:'',
     password:''
@@ -37,11 +37,11 @@ const Signup=()=>{
 
   const handleinput=(e)=>{
     e.preventDefault();
-    const{email,value}=e.target;
+    const{name,value}=e.target;
   
     setFormdata({
       ...formdata,  
-      [email]:value,
+      [name]:value,
     });
   }
   const handleSubmit= async (e)=>{
@@ -58,7 +58,7 @@ const Signup=()=>{
 
       if (response.status === 409) {
         alert(data.message);
-        Navigate('/login'); // Redirect to login page if user already exists
+        Navigate('/newtodo'); // Redirect to login page if user already exists
       } else if (!response.ok) {
         throw new Error(data.message || 'Something went wrong');
       } else{
