@@ -2,8 +2,8 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import SendOtp from "./level2/Sendotp";
 import Signup from "./level2/Signup";
 import Login from "./level2/Login";
-import Newtodo from "./level2/Newtodo"
 import Authpg from "./level2/Newauthpg";  
+import Newtodo from "./level2/Newtodo"
 // import TaskForm from "./level2/Toodoo";
 
 function App() {

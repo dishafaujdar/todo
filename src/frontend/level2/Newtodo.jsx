@@ -1,16 +1,11 @@
-import React, { useState , useEffect } from 'react';
-import 
-{
+import React, { useState, useEffect } from 'react';
+import toast, { Toaster } from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
+import {
   AppBar as MuiAppBar,
   Box,
   CssBaseline,
-  Drawer as MuiDrawer,
   IconButton,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Toolbar as MuiToolbar,
   Typography,
   Button,
   Container,
@@ -18,21 +13,16 @@ import
   Grid,
   TextField,
   MenuItem,
-  Checkbox,
-  FormControlLabel
+  Checkbox
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import AssignmentIcon from '@mui/icons-material/Assignment';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import SettingsIcon from '@mui/icons-material/Settings';
-import ActivityIcon from '@mui/icons-material/LocalActivity';
 
-const MyApp = () => 
-{
+const MyApp = () => {
   const [tasks, setTasks] = useState([]);
-  const [newTask, setNewTask] = useState({ date: '', text: '', priority: 'Low' });
-  const token = localStorage.getItem('token'); // Assuming token is stored in localStorage
+  const [newTask, setNewTask] = useState({ content: '', time: '' ,date: '', priority: 'Low' });
+  const [remaind,setRemind] = useState()
+  const token = localStorage.getItem('token'); 
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchTodos = async () => {
@@ -43,8 +33,12 @@ const MyApp = () =>
             Authorization: `Bearer ${token}`, 
           },
         });
+        if (!response.ok) {
+          throw new Error('Forbidden');
+        }
         const result = await response.json();
         setTasks(result);
+        result.forEach(scheduleReminder);
       } catch (error) {
         console.error('Error fetching todos:', error);
       }
@@ -58,32 +52,38 @@ const MyApp = () =>
     setNewTask((prev) => ({ ...prev, [name]: value }));
   };
 
-  const addTask = async () => 
-  {
-    if (newTask.date && newTask.text) {
+  const addTask = async (e) => {
+    e.preventDefault();
+    if (newTask.date && newTask.time && newTask.content) {
       try {
-        const response = await fetch('http://localhost:3000/newtodo',{
-          method:'POST',
+        const response = await fetch('http://localhost:3000/newtodo', {
+          method: 'POST',
           headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            content: newTask.text,
-            Date: newTask.date,
-            Priority: newTask.priority,
+            content: newTask.content,
+            time: newTask.time,
+            date: newTask.date,
+            priority: newTask.priority,
           }),
-
         });
+
+        if (!response.ok) {
+          throw new Error('Forbidden');
+        }
+
         const result = await response.json();
         const createdTask = result.todo;
         setTasks((prev) => [...prev, { ...createdTask, completed: false }]);
-        setNewTask({ date: '', text: '', priority: 'Low' });
-      }
-      catch (error) {
+        setNewTask({ content: '', time:'', date: '', priority: 'Low' });
+        scheduleReminder(createdTask);
+      } catch (error) {
         console.error('Error creating task:', error);
       }
-    };
+    }
+  };
 
   const toggle = (index) => {
     setTasks((prev) =>
@@ -97,124 +97,109 @@ const MyApp = () =>
     setTasks((prev) => prev.filter((_, index) => index !== indexToDelete));
   };
 
+  const scheduleReminder = (task) => {
+    const taskTime = new Date(`${task.date}T${task.time}`);
+    const now = new Date();
+    const timeUntilReminder = taskTime.getTime() - now.getTime();
+
+    if (timeUntilReminder > 0) {
+      setTimeout(() => {
+        alert(`Reminder: You have a task "${task.content}" scheduled now.`);
+      }, timeUntilReminder);
+    }
+  };
+  const remindMe = (task) => {
+    alert(`Reminder: You have a task "${task.content}" scheduled on ${new Date(task.date)}`);
+    setRemind()
+  };
+
   return (
-    // <Box sx={{ display: 'flex' }}>
-    //   <CssBaseline />
-    //   <MuiAppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-    //     <MuiToolbar>
-    //       <IconButton color="inherit" aria-label="open drawer" edge="start">
-    //         <MenuIcon />
-    //       </IconButton>
-    //       <Typography variant="h6" noWrap>
-    //         TODOist
-    //       </Typography>
-    //     </MuiToolbar>
-    //   </MuiAppBar>
-    //   <MuiDrawer
-    //     sx={{
-    //       width: 240,
-    //       flexShrink: 0,
-    //       '& .MuiDrawer-paper': {
-    //         width: 240,
-    //       },
-    //     }}
-    //     variant="permanent"
-    //   >
-    //     <MuiToolbar />
-    //     <List>
-    //       {[
-    //         { text: 'Dashboard', icon: <DashboardIcon /> },
-    //         { text: 'Tasks', icon: <AssignmentIcon /> },
-    //         { text: 'Activity', icon: <ActivityIcon /> },
-    //         { text: 'Notifications', icon: <NotificationsIcon /> },
-    //         { text: 'Settings', icon: <SettingsIcon /> },
-    //       ].map((item) => (
-    //         <ListItem button key={item.text}>
-    //           <ListItemIcon>{item.icon}</ListItemIcon>
-    //           <ListItemText primary={item.text} />
-    //         </ListItem>
-    //       ))}
-    //     </List>
-    //   </MuiDrawer>
-    //   <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        // <MuiToolbar />
-        <Container>
-          <Box display="flex" justifyContent="space-between" mb={3}>
-            <Typography variant="h4">My Tasks</Typography>
-            <Button variant="contained" color="primary" onClick={addTask}>
-              Add Task
-            </Button>
-          </Box>
-          <Box mb={3}>
-            <TextField
-              label="Date"
-              type="date"
-              name="date"
-              value={newTask.date}
-              onChange={handleInputChange}
-              fullWidth
-              sx={{ mb: 2 }}
-              InputLabelProps={{ shrink: true }}
-            />
-            <TextField
-              label="Task"
-              name="text"
-              value={newTask.text}
-              onChange={handleInputChange}
-              fullWidth
-              sx={{ mb: 2 }}
-            />
-            <TextField
-              label="Priority"
-              name="priority"
-              value={newTask.priority}
-              onChange={handleInputChange}
-              select
-              fullWidth
-              sx={{ mb: 2 }}
-            >
-              <MenuItem value="Low">Low</MenuItem>
-              <MenuItem value="High">High</MenuItem>
-            </TextField>
-          </Box>
-          {tasks.map((task, index) => (
-            <Box key={index} mb={3}>
-              <Typography variant="h6" gutterBottom>
-                {task.date}
-              </Typography>
-              <Paper sx={{ padding: 2, marginBottom: 2 }}>
-                <Grid container alignItems="center" justifyContent="space-between">
-                  <Grid item xs={1}>
-                    <Checkbox
-                      color="primary"
-                      checked={task.completed}
-                      onChange={() => toggle(index)}
-                      style={{ textDecoration: task.completed ? 'line-through' : 'none' }}
-                    />
-                  </Grid>
-                  <Grid item xs={7}>
-                    <Typography
-                      style={{ textDecoration: task.completed ? 'line-through' : 'none' }}
-                    >
-                      {task.text}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={4} textAlign="right">
-                    <Typography color={task.priority === 'High' ? 'error' : 'textSecondary'}>
-                      {task.priority} Priority
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={1}>
-                    <Button onClick={() => deleteTask(index)}>Delete</Button>
-                  </Grid>
-                </Grid>
-              </Paper>
+    <Container>
+      <Box display="flex" justifyContent="space-between" mb={3}>
+        <Typography variant="h4">My Tasks</Typography>
+        <Button variant="contained" color="primary" onClick={addTask}>
+          Add Task
+        </Button>
+      </Box>
+      <Box mb={3}>
+        <TextField
+          label="Date"
+          type="date"
+          name="date"
+          value={newTask.date}
+          onChange={handleInputChange}
+          fullWidth
+          sx={{ mb: 2 }}
+          InputLabelProps={{ shrink: true }}
+        />
+        <TextField
+          label="time"
+          type="time"
+          name="time"
+          value={newTask.time}
+          onChange={handleInputChange}
+          fullWidth
+          sx={{ mb: 2 }}
+          InputLabelProps={{ shrink: true }}
+        />
+        <TextField
+          label="Task"
+          name="content"
+          value={newTask.content}
+          onChange={handleInputChange}
+          fullWidth
+          sx={{ mb: 2 }}
+        />
+        <TextField
+          label="Priority"
+          name="priority"
+          value={newTask.priority}
+          onChange={handleInputChange}
+          select
+          fullWidth
+          sx={{ mb: 2 }}
+        >
+          <MenuItem value="Low">Low</MenuItem>
+          <MenuItem value="Medium">Medium</MenuItem>
+          <MenuItem value="High">High</MenuItem>
+        </TextField>
+      </Box>
+      {tasks.length > 0 ? (
+        tasks.map((task, index) => (
+          <Paper
+            key={index}
+            elevation={2}
+            sx={{ mb: 2, p: 2, backgroundColor: task.completed ? 'lightgray' : 'white' }}
+          >
+            <Box display="flex" justifyContent="space-between">
+              <Box>
+                <Typography variant="h6">
+                {new Date(task.date).toLocaleDateString()} {task.time}
+                </Typography>
+                <Typography variant="h6">{task.content}</Typography>
+                <Typography variant="body2" color="textSecondary">
+                  {task.priority}
+                </Typography>
+              </Box>
+              <Box>
+                <Button onClick={() => deleteTask(index)} color="secondary">Delete</Button>
+                <Checkbox checked={task.completed} onChange={() => toggle(index)} />
+                <br></br>
+                <Button variant="outlined" color="secondary" onClick={() => remindMe(task)}>
+                  Remind Me
+                  <Toaster/>
+                </Button>
+              </Box>
+                
             </Box>
-          ))}
-        </Container>
-      // </Box>
-    // </Box>
+          </Paper>
+                
+        ))
+      ) : (
+        <Typography>No tasks available</Typography>
+      )}
+    </Container>
   );
 };
-}
+
 export default MyApp;

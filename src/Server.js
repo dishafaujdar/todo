@@ -9,6 +9,7 @@ const PORT=3000;
 const app=express();
 app.use(cors());
 app.use(express.json());
+// app.use(bodyParser.json());
 const mongouri="mongodb+srv://dishasupreme11:disha123@useroftodo.sknowvs.mongodb.net/todo-webapp?retryWrites=true&w=majority&appName=userofTodo";
 const secretkey= 'SecRETE';
 
@@ -43,7 +44,7 @@ const authenticatejwt = (req, res, next) => {
             next();
         });
     } else {
-        res.sendStatus(401);
+        return  res.sendStatus(401);
     }
 };
 
@@ -105,21 +106,25 @@ app.post('/login', async (req, res) => {
     }
 }); 
 
-app.post('/newtodo', authenticatejwt,async (req, res) => {
+app.post('/newtodo', authenticatejwt, async (req, res) => {
     console.log('POST /newtodo hit');
-    console.log("req.user",req.user);
-
-    const { content, Date, Priority } = req.body;
+    console.log("req.user", req.user);
+  
+    const { content, time ,date, priority } = req.body;
+    if (!content || !time ||  !date || !priority) {
+      return res.status(400).json({ message: "Content, date, and priority are required" });
+    }
     try {
-        const todo = await Todo.create({content,Date,Priority, createdBy:req.user._id })
-        console.log('todo', todo)
-        return res.json({ message: "Todo created", todo });
+      const todo = await Todo.create({ content, time, date, priority, createdBy: req.user._id });
+      console.log('todo', todo);
+      return res.json({ message: "Todo created", todo });
     } catch (error) {
-        console.error('Error creating todo:', error);
-        return res.status(500).json({ message: "Internal server error" });
-  }
+      console.error('Error creating todo:', error);
+      return res.status(500).json({ message: "Internal server error" });
+    }
   });
-
+  
+  
 app.get('/newtodo', authenticatejwt, async (req, res) => {
     try {
         const todos = await Todo.find({ createdBy: req.user._id });  // Use req.user._id to find todos by the user's ID
@@ -129,5 +134,16 @@ app.get('/newtodo', authenticatejwt, async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
       }
     });
-
+app.delete('/newtodo',authenticatejwt,async(req,res)=>{
+    try{
+        const todos= await Todo.findByIdAndDelete({createdBy: req.user._id});
+        if(!todos){
+            return res.status(404).json({message:'no such task assigned'})
+        }
+        return res.status(200).json({message:'Task deleted successfully'})
+    }catch(error){
+        console.error('Error fetching todos:', error);
+        res.status(500).json({ message: "Internal server error" });
+      }
+});
 export default app;
