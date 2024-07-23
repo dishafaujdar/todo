@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import SendOtp from "./level2/Sendotp";
+import SendOtp from "../../../level1/Sendotp";
 import Signup from "./level2/Signup";
 import Login from "./level2/Login";
 import Authpg from "./level2/Newauthpg";  
@@ -12,12 +12,13 @@ function App() {
   <div>
     <Router>
     <div>
-      <Routes>
+        <Routes>
         <Route 
           />
           {/* <Route path="/task" element={<TaskForm/>}/> */}
+          <Route path="/" element={<Signup />} />
           <Route path="/sendOtp" element={<SendOtp/>}/>
-          <Route path="/signup" element={<Signup/>}/>
+          {/* <Route path="/signup" element={<Signup/>}/>  */}
           <Route path="/login" element={<Login />}/>
           <Route path="/newtodo" element={<Newtodo/>}/>
           <Route path="/newauth" element={<Authpg/>}/>

@@ -1,6 +1,7 @@
 import React,{useState,useEffect} from 'react';
 import {Navigate, useNavigate } from "react-router-dom";
 import { fbDataUrl, googleDataUrl, twitterDataUrl } from '../../assest/photo'
+import { useAuth0 } from "@auth0/auth0-react";
 import {
   Container,
   CssBaseline,
@@ -20,6 +21,9 @@ const theme = createTheme();
 
 
 const Signup=()=>{
+
+  const {loginWithRedirect}= useAuth0()
+
   
   const Navigate=useNavigate();
 
@@ -132,6 +136,7 @@ const Signup=()=>{
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
+                style={{marginRight:'5px'}}
                 >
                 Sign In
               </Button>
@@ -145,6 +150,15 @@ const Signup=()=>{
                 Login
               </Button>
               </div>
+            {/* AUTH0 */}
+              <Button
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+              onClick={() => loginWithRedirect()}
+            >
+              Login with Auth0
+            </Button>
 
             <Grid container>
               <Grid item xs>
@@ -160,6 +174,7 @@ const Signup=()=>{
               variant="outlined"
               startIcon={<img src={googleDataUrl} alt="Google" width="40" />}
               sx={{ mb: 1 }}
+              onClick={() => loginWithRedirect({ connection: 'google-oauth2' })}
             >
               Sign in with Google
             </Button>
@@ -174,6 +189,8 @@ const Signup=()=>{
                 />
               }
               sx={{ mb: 1 }}
+              onClick={() => loginWithRedirect({ connection: 'facebook' })}
+
             >
               Sign in with Facebook
             </Button>
@@ -181,6 +198,8 @@ const Signup=()=>{
               fullWidth
               variant="outlined"
               startIcon={<img src={twitterDataUrl} alt="Twitter" width="40" />}
+              onClick={() => loginWithRedirect({ connection: 'twitter' })}
+
             >
               Sign in with Twitter
             </Button>
