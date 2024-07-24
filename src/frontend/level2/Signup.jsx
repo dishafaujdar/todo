@@ -1,5 +1,5 @@
 import React,{useState,useEffect} from 'react';
-import {Navigate, useNavigate } from "react-router-dom";
+import {useNavigate } from "react-router-dom";
 import { fbDataUrl, googleDataUrl, twitterDataUrl } from '../../assest/photo'
 import { useAuth0 } from "@auth0/auth0-react";
 import {
@@ -23,6 +23,14 @@ const theme = createTheme();
 const Signup=()=>{
 
   const {loginWithRedirect}= useAuth0()
+
+  const handleAuth0Login = async () => {
+    try {
+      await loginWithRedirect();
+    } catch (error) {
+      console.error("Login with Auth0 failed", error);
+    }
+  };
 
   
   const Navigate=useNavigate();
@@ -155,7 +163,7 @@ const Signup=()=>{
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
-              onClick={() => loginWithRedirect()}
+              onClick={handleAuth0Login}
             >
               Login with Auth0
             </Button>
