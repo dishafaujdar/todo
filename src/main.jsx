@@ -2,26 +2,21 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './frontend/App.jsx'
 import { Auth0Provider } from '@auth0/auth0-react';
+import ('dotenv/config')
 
-const apiUrl = import.meta.env.DOMAIN;
-const googleClientId = import.meta.env.CLIENTID;
+const domain = process.env.AUTH0_DOMAIN
 
-
-console.log('API URL:', apiUrl);
-console.log('Google Client ID:', googleClientId);
-
-// Ensure you replace these with your actual Auth0 configuration
-const domain = apiUrl;
-const clientId = googleClientId;
-
+console.log('Domain:', domain);
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
   <Auth0Provider 
-   domain={domain}
-   clientId={clientId}
-   authorizationParams={{
-     redirect_uri: window.location.origin
+  domain={domain}
+  clientId= "process.env.CLIENT_Id"
+  authorizationParams={{
+    redirect_uri:"http://localhost:5173/newtodo",
+    audience: "https://dev-gdy3ffogfy1nj7co.us.auth0.com/api/v2/",
+    scope: "read:current_user update:current_user_metadata"
    }}
    >
     <App />

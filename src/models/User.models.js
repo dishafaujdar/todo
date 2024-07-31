@@ -2,6 +2,11 @@ import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema(
   {
+    auth0Id: {
+      type: String || Number,
+      unique: true,
+      index: true
+    },
     email: {
       type: String,
       require: true,
